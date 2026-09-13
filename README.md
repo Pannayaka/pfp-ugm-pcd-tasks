@@ -13,8 +13,8 @@ opened and run independently.
 ```
 .
 ├── README.md                    <- you are here (course-level index)
-├── PCD_Assignment01/             <- Down-Sampling & Up-Sampling
-│   ├── PCD_Assignment01.ipynb
+├── PCD_Assignment_1/             <- Down-Sampling & Up-Sampling
+│   ├── PCD_Assignment_01.ipynb
 │   ├── README.md
 │   ├── REPORT.md
 │   ├── requirements.txt
@@ -32,7 +32,7 @@ following the same pattern, and a new row is added to the table below.
 
 | # | Title | Topic | Status | Link |
 |---|---|---|---|---|
-| 01 | Image Down-Sampling & Up-Sampling | Max/Average/Median pooling, Nearest Neighbor/Bilinear/Bicubic interpolation | ✅ Done | [PCD_Assignment01/](./PCD_Assignment01) |
+| 01 | Image Down-Sampling & Up-Sampling | Max/Average/Median pooling, Nearest Neighbor/Bilinear/Bicubic interpolation | ✅ Done | [PCD_Assignment_1/](./PCD_Assignment_1) |
 | 02 | *TBA* | *TBA* | ⏳ Not started | — |
 | 03 | *TBA* | *TBA* | ⏳ Not started | — |
 
