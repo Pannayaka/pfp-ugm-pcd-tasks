@@ -1,124 +1,125 @@
-# Laporan Analisis — PCD Assignment 01
-## Down Sampling & Up Sampling Citra Digital
+# Analysis Report — PCD Assignment 01
+## Image Down-Sampling and Up-Sampling
 
-**Mata Kuliah:** Pengolahan Citra Digital
-**Semester:** 3 (Ilmu Komputer)
 **Tools:** Google Colab, Python (OpenCV, NumPy, scikit-image, Matplotlib, Pandas)
 
 ---
 
-## 1. Tujuan
+## 1. Objective
 
-Praktikum ini bertujuan untuk mengimplementasikan dan membandingkan performa
-beberapa metode **down-sampling** (Max Pooling, Average Pooling, Median Pooling)
-dan **up-sampling** (Nearest Neighbor, Bilinear, Bicubic) pada citra digital, serta
-menganalisis pengaruh masing-masing metode terhadap kualitas visual dan kuantitatif
-citra hasil.
+This assignment implements and compares several **down-sampling** methods (Max
+Pooling, Average Pooling, Median Pooling) and **up-sampling** methods (Nearest
+Neighbor, Bilinear, Bicubic) on digital images, and analyzes how each method
+affects the visual and quantitative quality of the resulting image.
 
-## 2. Metodologi
+## 2. Methodology
 
-Tiga citra uji dengan karakteristik berbeda digunakan agar analisis mencakup
-berbagai jenis konten visual:
+Three test images with different characteristics were used so the analysis
+covers a range of visual content:
 
-| Citra | Karakteristik |
+| Image | Characteristics |
 |---|---|
-| **Astronaut** (512×512, RGB) | Foto natural berwarna dengan tekstur halus, kulit, dan tepi objek jelas |
-| **Cameraman** (512×512, grayscale) | Citra klasik dengan gradasi kontras dan detail halus |
-| **Checkerboard** (200×200) | Pola kotak-kotak berulang berfrekuensi tinggi — cocok untuk mengamati *aliasing* |
+| **Astronaut** (512×512, RGB) | Natural color photograph with smooth texture, skin tones, and clear object edges |
+| **Cameraman** (512×512, grayscale) | Classic grayscale image with fine detail and contrast gradients |
+| **Checkerboard** (200×200) | Repeating high-frequency checkerboard pattern — suitable for observing *aliasing* effects |
 
-**Down-sampling** diimplementasikan secara manual dengan membagi citra menjadi
-blok berukuran `factor × factor` piksel, kemudian setiap blok direduksi menjadi
-satu nilai piksel menggunakan operasi *max*, *mean* (average), atau *median*.
+**Down-sampling** was implemented manually by dividing the image into
+non-overlapping `factor × factor` pixel blocks, then reducing each block to a
+single value using one of three operations: *max*, *mean* (average), or
+*median*.
 
-**Up-sampling** diimplementasikan menggunakan `cv2.resize()` dengan tiga jenis
-interpolasi: `INTER_NEAREST` (NN), `INTER_LINEAR` (bilinear), dan `INTER_CUBIC`
+**Up-sampling** was implemented using `cv2.resize()` with three interpolation
+methods: `INTER_NEAREST` (NN), `INTER_LINEAR` (bilinear), and `INTER_CUBIC`
 (bicubic).
 
-Setiap citra di-down-sample dengan faktor **4×** dan **8×**, kemudian di-up-sample
-kembali ke ukuran semula. Kualitas hasil rekonstruksi dibandingkan terhadap citra
-asli menggunakan dua metrik kuantitatif:
-- **PSNR** (Peak Signal-to-Noise Ratio, dB) — semakin tinggi semakin mirip.
-- **SSIM** (Structural Similarity Index, rentang 0–1) — semakin mendekati 1 semakin mirip secara struktural.
+Each image was down-sampled by a factor of **4×** and **8×**, then up-sampled
+back to its original size. The reconstructed image was compared against the
+original using two quantitative metrics:
+- **PSNR** (Peak Signal-to-Noise Ratio, in dB) — higher means more similar to the original.
+- **SSIM** (Structural Similarity Index, range 0–1) — closer to 1 means more structurally similar.
 
-## 3. Hasil
+## 3. Results and Discussion
 
-### 3.1 Down Sampling
-Secara visual (lihat `outputs/downsampling_astronaut.png` dan
+### 3.1 Down-Sampling
+Visually (see `outputs/downsampling_astronaut.png` and
 `outputs/downsampling_checkerboard.png`):
-- **Max pooling** membuat citra tampak lebih terang dan kehilangan detail bayangan,
-  karena selalu memilih nilai piksel tertinggi pada tiap blok.
-- **Average pooling** menghasilkan citra yang halus dan proporsional, mendekati
-  hasil down-sampling standar pada umumnya.
-- **Median pooling** memberikan hasil yang mirip average pooling pada citra
-  bertekstur halus, tetapi jauh lebih baik dalam mempertahankan pola tegas pada
-  citra checkerboard.
+- **Max pooling** makes the image appear brighter overall and loses shadow
+  detail, since it always selects the highest pixel value in every block.
+- **Average pooling** produces a smooth, well-balanced result, close to what
+  standard image resizing typically produces.
+- **Median pooling** looks similar to average pooling on smooth-textured
+  images, but preserves sharp patterns on the checkerboard image noticeably
+  better.
 
-Secara kuantitatif (rata-rata seluruh citra & faktor skala):
+Quantitatively (averaged across all images and both scale factors):
 
-| Metode Down-Sampling | Rata-rata PSNR (dB) | Rata-rata SSIM |
+| Down-Sampling Method | Average PSNR (dB) | Average SSIM |
 |---|---|---|
 | Max Pooling | 14.58 | 0.59 |
 | Average Pooling | 20.62 | 0.66 |
 | Median Pooling | 20.26 | 0.69 |
 
-*Nilai tepat dapat dilihat pada `metrics_results.csv` yang dihasilkan notebook.*
+*Exact per-combination values are available in `outputs/metrics_results.csv`
+generated by the notebook.*
 
-Max pooling secara konsisten memiliki PSNR/SSIM terendah di semua kondisi
-pengujian, mengonfirmasi bahwa metode ini paling banyak mendistorsi informasi
-citra asli akibat bias ke arah nilai piksel maksimum.
+Max pooling consistently produced the lowest PSNR/SSIM across all test
+conditions, confirming that it distorts the original image the most, due to
+its systematic bias toward the maximum pixel value in each block.
 
-### 3.2 Up Sampling
-Secara visual (lihat `outputs/upsampling_camera.png` dan
+### 3.2 Up-Sampling
+Visually (see `outputs/upsampling_camera.png` and
 `outputs/upsampling_zoom_astronaut.png`):
-- **Nearest Neighbor** menghasilkan efek kotak-kotak (*blocky/pixelated*) yang
-  jelas terlihat, karena tidak melakukan interpolasi nilai piksel.
-- **Bilinear** menghasilkan transisi warna yang jauh lebih halus dibanding NN.
-- **Bicubic** memberikan hasil paling halus dan tampak paling tajam di antara
-  ketiganya, terutama pada tepi objek.
+- **Nearest Neighbor** produces a clearly visible blocky / pixelated effect,
+  since it performs no interpolation at all.
+- **Bilinear** produces a much smoother color transition compared to NN.
+- **Bicubic** gives the smoothest and visually sharpest result of the three,
+  especially along object edges.
 
-Secara kuantitatif (rata-rata seluruh citra & faktor skala):
+Quantitatively (averaged across all images and both scale factors):
 
-| Metode Up-Sampling | Rata-rata PSNR (dB) | Rata-rata SSIM |
+| Up-Sampling Method | Average PSNR (dB) | Average SSIM |
 |---|---|---|
 | Nearest Neighbor (NN) | 17.56 | 0.64 |
 | Bilinear | 18.74 | 0.64 |
 | Bicubic | 19.16 | 0.66 |
 
-Urutan performa ini (**NN < Bilinear < Bicubic**) konsisten pada seluruh kombinasi
-citra dan faktor skala yang diuji.
+This ordering (**NN < Bilinear < Bicubic**) was consistent across every image
+and scale factor tested.
 
-## 4. Analisis Pengaruh Karakteristik Citra
+### 3.3 Effect of Image Characteristics
 
-Citra **checkerboard** (pola frekuensi tinggi) menunjukkan penurunan PSNR/SSIM
-yang jauh lebih tajam dibanding citra natural (astronaut, cameraman) pada faktor
-downsampling yang sama. Hal ini terjadi karena pola berulang dengan transisi
-kontras tinggi sangat rentan terhadap **aliasing** — informasi frekuensi tinggi
-"terlipat" menjadi pola baru yang salah ketika sampling rate diturunkan tanpa
-low-pass filtering yang memadai. Sebaliknya, citra dengan gradasi warna halus
-(astronaut, cameraman) lebih toleran terhadap penurunan resolusi karena tidak
-banyak mengandung komponen frekuensi tinggi.
+The **checkerboard** image (high-frequency pattern) showed a much sharper
+drop in PSNR/SSIM than the natural images (astronaut, cameraman) at the same
+down-sampling factor. This happens because repeating high-contrast patterns
+are highly susceptible to **aliasing** — high-frequency information "folds"
+into an incorrect new pattern when the sampling rate is reduced without
+adequate low-pass filtering. In contrast, images with smooth color gradients
+(astronaut, cameraman) tolerate resolution reduction much better, since they
+contain fewer high-frequency components to begin with.
 
-Semakin besar faktor down-sampling (8× dibanding 4×), semakin besar pula
-penurunan kualitas pada seluruh kombinasi metode — sesuai ekspektasi teoritis
-karena semakin banyak informasi piksel asli yang dibuang secara permanen dan
-tidak dapat direkonstruksi sepenuhnya oleh interpolasi up-sampling apa pun.
+As expected, a larger down-sampling factor (8× vs. 4×) caused a larger
+quality drop across every method combination, since more of the original
+pixel information is permanently discarded and cannot be fully recovered by
+any up-sampling interpolation.
 
-## 5. Kesimpulan
+## 4. Conclusion
 
-1. Untuk **down-sampling**, **Average Pooling** dan **Median Pooling** memberikan
-   hasil terbaik secara umum; **Median Pooling** lebih unggul pada citra dengan
-   pola/tepi tegas, sedangkan **Average Pooling** sedikit lebih baik pada citra
-   dengan gradasi halus. **Max Pooling** sebaiknya dihindari untuk kompresi/
-   resize citra karena bias kecerahan yang signifikan, meskipun berguna dalam
-   konteks lain seperti *feature extraction* pada CNN.
-2. Untuk **up-sampling**, **Bicubic** memberikan kualitas visual dan kuantitatif
-   terbaik namun dengan biaya komputasi tertinggi; **Nearest Neighbor** tercepat
-   namun menghasilkan artefak blocky yang signifikan; **Bilinear** merupakan
-   kompromi yang baik antara kecepatan dan kualitas.
-3. Pemilihan metode terbaik bergantung pada **karakteristik citra** (halus vs.
-   frekuensi tinggi) dan **kebutuhan aplikasi** (real-time vs. kualitas akhir).
-   Tidak ada metode tunggal yang optimal untuk semua kasus.
+1. For **down-sampling**, **Average Pooling** and **Median Pooling** both
+   perform well overall; **Median Pooling** has an edge on images with sharp
+   patterns/edges, while **Average Pooling** is slightly better on images
+   with smooth gradients. **Max Pooling** should generally be avoided for
+   image resizing/compression due to its significant brightness bias, though
+   it remains useful in other contexts such as feature extraction in CNNs.
+2. For **up-sampling**, **Bicubic** gives the best visual and quantitative
+   quality but at the highest computational cost; **Nearest Neighbor** is the
+   fastest but produces significant blocky artifacts; **Bilinear** is a good
+   compromise between speed and quality.
+3. The best method depends on **image characteristics** (smooth vs.
+   high-frequency content) and **application requirements** (real-time
+   processing vs. final output quality). No single method is optimal in
+   every case.
 
 ---
-*Seluruh kode, citra uji, dan hasil eksperimen (grafik & CSV) tersedia pada
-notebook `PCD_Assignment01.ipynb` dan folder `outputs/` di repository ini.*
+*All source code, test images, and experiment results (charts & CSV) are
+available in the `PCD_Assignment01.ipynb` notebook and the `outputs/` folder
+of this repository.*
