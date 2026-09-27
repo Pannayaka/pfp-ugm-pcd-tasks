@@ -33,7 +33,7 @@ following the same pattern, and a new row is added to the table below.
 | # | Title | Topic | Status | Link |
 |---|---|---|---|---|
 | 01 | Image Down-Sampling & Up-Sampling | Max/Average/Median pooling, Nearest Neighbor/Bilinear/Bicubic interpolation | ✅ Done | [PCD_Assignment_1/](./PCD_Assignment_1) |
-| 02 | *TBA* | *TBA* | ⏳ Not started | — |
+| 02 | Image Enhance Implementation | Filtering/Sharpening/Covultion/Median Filter | ✅ Done | [PCD_Assignment_2/](./PCD_Assignment_2) |
 | 03 | *TBA* | *TBA* | ⏳ Not started | — |
 
 ## Conventions Used in This Repository
