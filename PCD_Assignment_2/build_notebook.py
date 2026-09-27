@@ -1,9 +1,4 @@
-"""
-build_notebook.py — generates notebook/image_enhancement_colab.ipynb
-by assembling markdown explanations + the actual source code from
-src/enhancement.py and src/make_test_images.py, so the notebook and the
-plain .py source files never drift out of sync.
-"""
+
 import nbformat as nbf
 import os
 
